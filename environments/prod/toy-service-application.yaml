@@ -1,0 +1,25 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: toy-service-prod
+  labels:
+    app.kubernetes.io/part-of: toy-service
+    environment: prod
+spec:
+  project: default
+  source:
+    repoURL: 'https://github.com/paulcapestany/bitiq-infra-gitops.git'
+    path: 'helm/toy-service'
+    targetRevision: HEAD
+    helm:
+      valueFiles:
+        - values-prod.yaml
+  destination:
+    namespace: toy-service-prod
+    server: 'https://kubernetes.default.svc'
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    # For production, you might disable auto-sync and require manual sync steps.
+    # This can be adjusted based on your policy.

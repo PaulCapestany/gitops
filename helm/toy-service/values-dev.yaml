@@ -1,0 +1,7 @@
+# Dev environment overrides
+image:
+  tag: "dev-latest"
+replicaCount: 1
+ingress:
+  enabled: true
+  hostname: toy-service-dev.example.com

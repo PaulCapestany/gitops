@@ -1,0 +1,16 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: toy-service-image-updater-config
+  # This is a pseudo-manifest to show how Argo CD Image Updater might be configured.
+  # In practice, you configure Argo CD Image Updater via a ConfigMap or annotations on the Application.
+  # For demonstration:
+annotations:
+  argocd-image-updater.argoproj.io/image-list: "toy-service=quay.io/paulcapestany/toy-service"
+  argocd-image-updater.argoproj.io/toy-service.update-strategy: "semver"
+  argocd-image-updater.argoproj.io/toy-service.allowed-tags: "^dev-.*$"
+spec:
+  # Not a real Application - just a placeholder documentation resource.
+  # Actual configuration would be done in Argo CD Image Updater configmaps, or via Application annotations directly.
+  # For now, we rely on the fact that Argo CD Image Updater sees the Application and updates the Helm values accordingly.
+  project: default

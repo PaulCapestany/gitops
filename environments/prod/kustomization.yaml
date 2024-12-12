@@ -1,0 +1,3 @@
+# Placeholder if we ever want to Kustomize additional overlays.
+resources:
+  - toy-service-application.yaml

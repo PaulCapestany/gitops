@@ -1,0 +1,44 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: toy-service-build-pipeline
+spec:
+  tasks:
+    - name: fetch-source
+      taskRef:
+        name: git-clone
+      params:
+        - name: url
+          value: "https://github.com/paulcapestany/toy-service.git"
+        - name: revision
+          value: main
+      workspaces:
+        - name: source
+    - name: build-image
+      runAfter: [fetch-source]
+      taskRef:
+        name: buildah
+      params:
+        - name: IMAGE
+          value: quay.io/paulcapestany/toy-service:dev-$(date +%s)
+      workspaces:
+        - name: source
+    - name: push-image
+      runAfter: [build-image]
+      taskRef:
+        name: buildah
+      params:
+        - name: IMAGE
+          value: quay.io/paulcapestany/toy-service:dev-$(date +%s)
+        - name: DO_PUSH
+          value: "true"
+      workspaces:
+        - name: source
+    - name: run-tests
+      runAfter: [build-image]
+      taskRef:
+        name: toy-service-tests
+      workspaces:
+        - name: source
+  workspaces:
+    - name: source

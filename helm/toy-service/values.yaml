@@ -1,0 +1,26 @@
+# Global defaults for toy-service.
+# These can be overridden by environment-specific values files.
+image:
+  repository: quay.io/paulcapestany/toy-service
+  tag: "latest"
+  pullPolicy: IfNotPresent
+
+replicaCount: 1
+resources:
+  requests:
+    cpu: 100m
+    memory: 128Mi
+  limits:
+    cpu: 200m
+    memory: 256Mi
+
+service:
+  type: ClusterIP
+  port: 8080
+
+ingress:
+  enabled: false
+  hostname: toy-service.example.com
+
+# Use external secrets if needed
+extraEnv: []

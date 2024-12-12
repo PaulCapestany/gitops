@@ -1,0 +1,13 @@
+# Helm unittest tests
+suite: 
+  - it: "Service should be created"
+    asserts:
+      - hasDocuments:
+          kind: Service
+  - it: "Deployment should have correct image"
+    asserts:
+      - equal:
+          path: "spec.template.spec.containers[0].image"
+          value: "quay.io/paulcapestany/toy-service:dev-latest"
+        set:
+          - helm/toy-service/values-dev.yaml

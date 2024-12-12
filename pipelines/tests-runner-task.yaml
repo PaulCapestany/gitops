@@ -1,0 +1,15 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: toy-service-tests
+spec:
+  steps:
+    - name: run-tests
+      image: golang:1.20
+      script: |
+        set -xe
+        # Example test step
+        # In reality, you'd clone the code, run `go test`, `helm unittest`, etc.
+        echo "Running toy-service tests..."
+        # For demonstration, we just echo success
+        echo "Tests passed!"

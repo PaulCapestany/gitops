@@ -1,0 +1,14 @@
+# Prod environment overrides
+image:
+  tag: "prod-stable"
+replicaCount: 3
+ingress:
+  enabled: true
+  hostname: toy-service.example.com
+resources:
+  requests:
+    cpu: 200m
+    memory: 256Mi
+  limits:
+    cpu: 500m
+    memory: 512Mi

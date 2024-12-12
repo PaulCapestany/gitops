@@ -1,0 +1,5 @@
+# Ignore temporary build files, Helm release archives, and IDE configs
+*.tgz
+*.swp
+.idea/
+.vscode/

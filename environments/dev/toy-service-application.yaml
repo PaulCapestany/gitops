@@ -1,0 +1,23 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: toy-service-dev
+  labels:
+    app.kubernetes.io/part-of: toy-service
+    environment: dev
+spec:
+  project: default
+  source:
+    repoURL: 'https://github.com/paulcapestany/bitiq-infra-gitops.git'
+    path: 'helm/toy-service'
+    targetRevision: HEAD
+    helm:
+      valueFiles:
+        - values-dev.yaml
+  destination:
+    namespace: toy-service-dev
+    server: 'https://kubernetes.default.svc'
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

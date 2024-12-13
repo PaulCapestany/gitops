@@ -1,7 +1,9 @@
+# TODO: actually run tests here (this is just a placeholder now and not currently integrated into the pipeline yet)
 apiVersion: tekton.dev/v1beta1
 kind: Task
 metadata:
   name: toy-service-tests
+  namespace: default
 spec:
   steps:
     - name: run-tests

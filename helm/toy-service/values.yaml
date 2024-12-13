@@ -20,7 +20,7 @@ service:
 
 ingress:
   enabled: false
-  hostname: toy-service.example.com
+  hostname: toy-service.bitiq.io
 
 # Use external secrets if needed
 extraEnv: []

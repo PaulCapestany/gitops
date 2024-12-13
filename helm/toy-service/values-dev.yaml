@@ -1,7 +1,8 @@
 # Dev environment overrides
 image:
-  tag: "dev-latest"
+  # the tag value below is automatically set by the CI/CD pipeline (argo-cd-image-updater)
+  tag: "v0.1.0-abc1234"
 replicaCount: 1
 ingress:
   enabled: true
-  hostname: toy-service-dev.example.com
+  hostname: toy-service-dev.bitiq.io

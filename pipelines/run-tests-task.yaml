@@ -1,0 +1,37 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: run-tests-task
+  namespace: default
+spec:
+  workspaces:
+    - name: source
+  steps:
+    - name: helm-install
+      image: alpine:3.17
+      script: |
+        set -xe
+        apk add --no-cache curl bash tar
+        # Install Helm
+        curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
+        # Install helm unittest plugin
+        helm plugin install https://github.com/helm-unittest/helm-unittest
+        # Install kubeconform
+        curl -L https://github.com/yannh/kubeconform/releases/download/v0.4.13/kubeconform-linux-amd64.tar.gz | tar xz
+        mv kubeconform /usr/local/bin/kubeconform
+    - name: run-tests
+      image: alpine:3.17
+      workingDir: /workspace/source
+      script: |
+        set -xe
+        # Helm lint
+        helm lint helm/toy-service
+
+        # Template and validate with kubeconform
+        helm template dev helm/toy-service -f helm/toy-service/values-dev.yaml > dev-rendered.yaml
+        helm template prod helm/toy-service -f helm/toy-service/values-prod.yaml > prod-rendered.yaml
+        kubeconform -strict -ignore-missing-schemas dev-rendered.yaml
+        kubeconform -strict -ignore-missing-schemas prod-rendered.yaml
+
+        # Helm unittest
+        helm unittest helm/toy-service

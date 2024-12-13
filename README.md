@@ -4,7 +4,7 @@ This repository manages the deployment of the bitiq microservices (including toy
 - A single Helm chart (located in `helm/toy-service`) to deploy services to multiple environments (dev, prod) via separate values files.
 - Argo CD for continuous delivery and synchronization of Kubernetes manifests from this repo to the cluster.
 - Argo CD Image Updater to automatically update the image tags when new versions are pushed to the registry.
-- (Planned) Tekton-based OpenShift Pipelines to build, test, and push images to Quay.io.
+- Tekton-based OpenShift Pipelines to build, test, and push images to Quay.io.
 
 **Key Concepts:**
 - **Single Helm Chart:**  
@@ -13,13 +13,15 @@ This repository manages the deployment of the bitiq microservices (including toy
   Each environment has its own Argo CD Application manifest referencing the Helm chart and the appropriate values files. `kustomization.yaml` files can be used if you wish to layer additional configurations.
 - **Argo CD Image Updater (`argocd-image-updater`)**:  
   This detects new images in Quay.io and updates the environment manifests accordingly.
+- **Precise Image Tracking**:
+   Container images are all tagged with a semantic version tag (derived from Git tags on the service’s repository) coupled with a shortened git commit hash, e.g. `v0.2.1-abc1234`. This approach is human-readable (can tell the release level at a glance) but also points to an exact commit, making it trivial to rollback to a previously stable combination of images if a certain mixture causes problems.  
 
 **Getting Started:**
 1. **Set Up Argo CD:**  
    Point Argo CD at this repository. Sync the `environments/dev` directory for the dev environment and `environments/prod` directory for the prod environment.
 2. **Set Up CI Pipeline:**  
    A Tekton pipeline (`pipelines/toy-service-build-pipeline.yaml`) is provided as a reference for building and pushing images to Quay.io. Integrate it with your OpenShift cluster.
-3. **Secrets Management with Vault:**  
+3. **WIP: Secrets Management with Vault:**  
    Integrate External Secrets Operator or a similar mechanism to pull secrets from Vault and inject them into the cluster. Update the Helm chart to reference these secrets as needed.
 
 **Contributing & Access Control:**

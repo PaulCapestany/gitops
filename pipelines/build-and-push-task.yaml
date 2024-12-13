@@ -1,0 +1,26 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: build-and-push-task
+  namespace: default
+spec:
+  params:
+    - name: IMAGE
+      type: string
+      description: "Full image name including tag"
+  workspaces:
+    - name: source
+  steps:
+    - name: buildah-build-and-push
+      # Using buildah image
+      image: quay.io/buildah/stable:v1.29.1
+      env:
+        - name: DOCKER_CONFIG
+          value: /tekton/home/.docker
+      workingDir: /workspace/source
+      script: |
+        set -xe
+        # Assume the source repo contains a Dockerfile at the root or a known path.
+        # Adjust if Dockerfile is elsewhere.
+        buildah bud -f Dockerfile -t $IMAGE .
+        buildah push $IMAGE

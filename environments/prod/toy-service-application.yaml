@@ -1,3 +1,4 @@
+# TODO: this yaml needs to look more more like the dev env yaml (e.g. semver image tag stuff)
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
@@ -5,17 +6,25 @@ metadata:
   labels:
     app.kubernetes.io/part-of: toy-service
     environment: prod
+  annotations:
+    argocd-image-updater.argoproj.io/image-list: "toy-service=quay.io/paulcapestany/toy-service"
+    # The image tags should look like: <semver>-<sha>, e.g. v0.1.0-abc1234
+    argocd-image-updater.argoproj.io/toy-service.update-strategy: "semver"
+    # Validates that the image tag is a semver tag with a 7-character git sha suffix
+    argocd-image-updater.argoproj.io/toy-service.allow-tags: "^(v[0-9]+\\.[0-9]+\\.[0-9]+-[a-f0-9]{7})$"
+    # This ensures that pre-release versions (like those with -abc1234) are considered for updates
+    argocd-image-updater.argoproj.io/toy-service.versionConstraint: ">0.1.0-0"
 spec:
   project: default
   source:
-    repoURL: 'https://github.com/paulcapestany/bitiq-infra-gitops.git'
+    repoURL: 'https://github.com/paulcapestany/gitops.git'
     path: 'helm/toy-service'
     targetRevision: HEAD
     helm:
       valueFiles:
         - values-prod.yaml
   destination:
-    namespace: toy-service-prod
+    namespace: default
     server: 'https://kubernetes.default.svc'
   syncPolicy:
     automated:

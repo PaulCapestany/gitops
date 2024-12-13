@@ -2,43 +2,67 @@ apiVersion: tekton.dev/v1beta1
 kind: Pipeline
 metadata:
   name: toy-service-build-pipeline
+  namespace: default
 spec:
+  workspaces:
+    - name: source
+  params:
+    - name: git-url
+      type: string
+      description: "Git repository URL for toy-service"
+      default: "https://github.com/paulcapestany/toy-service.git"
+    - name: git-revision
+      type: string
+      description: "Git revision (branch, tag, commit) to build from"
+      default: "main"
+  
   tasks:
     - name: fetch-source
       taskRef:
         name: git-clone
+        kind: ClusterTask
       params:
         - name: url
-          value: "https://github.com/paulcapestany/toy-service.git"
+          value: "$(params.git-url)"
         - name: revision
-          value: main
-      workspaces:
-        - name: source
-    - name: build-image
-      runAfter: [fetch-source]
-      taskRef:
-        name: buildah
-      params:
-        - name: IMAGE
-          value: quay.io/paulcapestany/toy-service:dev-$(date +%s)
-      workspaces:
-        - name: source
-    - name: push-image
-      runAfter: [build-image]
-      taskRef:
-        name: buildah
-      params:
-        - name: IMAGE
-          value: quay.io/paulcapestany/toy-service:dev-$(date +%s)
-        - name: DO_PUSH
+          value: "$(params.git-revision)"
+        - name: deleteExisting
           value: "true"
       workspaces:
-        - name: source
-    - name: run-tests
-      runAfter: [build-image]
+        - name: output
+          workspace: source
+
+    - name: detect-semver
+      runAfter: [fetch-source]
       taskRef:
-        name: toy-service-tests
+        name: detect-version-tag
       workspaces:
         - name: source
-  workspaces:
-    - name: source
+          workspace: source
+
+    - name: transform-sha
+      runAfter: [fetch-source]
+      taskRef:
+        name: transform-sha-task
+      params:
+        - name: fullSha
+          value: "$(tasks.fetch-source.results.commitSha)"
+
+    - name: run-tests
+      runAfter: [detect-semver, transform-sha]
+      taskRef:
+        name: run-tests-task
+      workspaces:
+        - name: source
+          workspace: source
+
+    - name: build-and-push
+      runAfter: [run-tests]
+      taskRef:
+        name: build-and-push-task
+      workspaces:
+        - name: source
+          workspace: source
+      params:
+        - name: IMAGE
+          value: "quay.io/paulcapestany/toy-service:$(tasks.detect-semver.results.semverTag)-$(tasks.transform-sha.results.shortSha)"

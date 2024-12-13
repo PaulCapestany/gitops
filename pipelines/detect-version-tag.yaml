@@ -1,0 +1,28 @@
+# pipelines/detect-version-tag.yaml
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: detect-version-tag
+  namespace: default
+spec:
+  workspaces:
+    - name: source
+  results:
+    - name: semverTag
+      description: "The semantic version tag found via git describe"
+  steps:
+    - name: find-semver
+      image: alpine:3.17
+      workingDir: /workspace/source
+      script: |
+        set -xe
+        FULL_DESCRIBE=$(git describe --tags --abbrev=0)
+        # FULL_DESCRIBE should be something like 'v0.1.0'
+        # Validate it's a semver tag
+        if echo "$FULL_DESCRIBE" | grep -E -q '^v[0-9]+\.[0-9]+\.[0-9]+'; then
+          SEMVER="$FULL_DESCRIBE"
+        else
+          echo "No valid semver tag found!"
+          exit 1
+        fi
+        printf "%s" "$SEMVER" > $(results.semverTag.path)

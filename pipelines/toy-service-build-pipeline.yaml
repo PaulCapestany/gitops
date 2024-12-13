@@ -27,7 +27,7 @@ spec:
         - name: revision
           value: "$(params.git-revision)"
         - name: deleteExisting
-          value: "true"
+          value: "true"                
       workspaces:
         - name: output
           workspace: source
@@ -46,10 +46,36 @@ spec:
         name: transform-sha-task
       params:
         - name: fullSha
-          value: "$(tasks.fetch-source.results.commitSha)"
+          value: "$(tasks.fetch-source.results.commit)"
 
+    - name: prepare-workspace
+      runAfter: [fetch-source]
+      taskRef:
+        name: prepare-workspace
+      workspaces:
+        - name: source
+          workspace: source
+        
+    - name: fetch-gitops
+      runAfter: [fetch-source, prepare-workspace]
+      taskRef:
+        name: git-clone
+        kind: Task
+      params:
+        - name: url
+          value: "https://github.com/paulcapestany/gitops.git"
+        - name: revision
+          value: "main"
+        - name: deleteExisting
+          value: "false"
+        - name: subdirectory
+          value: "gitops"  # clones into /workspace/source/gitops          
+      workspaces:
+        - name: output
+          workspace: source
+          
     - name: run-tests
-      runAfter: [detect-semver, transform-sha]
+      runAfter: [detect-semver, transform-sha, fetch-gitops]
       taskRef:
         name: run-tests-task
       workspaces:
@@ -59,7 +85,7 @@ spec:
     - name: build-and-push
       runAfter: [run-tests]
       taskRef:
-        name: build-and-push-task
+        name: kaniko-build-and-push-task
       workspaces:
         - name: source
           workspace: source

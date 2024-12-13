@@ -1,0 +1,25 @@
+apiVersion: tekton.dev/v1beta1
+kind: PipelineRun
+metadata:
+  name: toy-service-build-run-1
+  namespace: default
+spec:
+  serviceAccountName: pipeline-sa
+  pipelineRef:
+    name: toy-service-build-pipeline
+  params:
+    - name: git-url
+      value: "https://github.com/paulcapestany/toy-service.git"
+    - name: git-revision
+      value: "main"
+  workspaces:
+    - name: source
+      volumeClaimTemplate:
+        spec:
+          accessModes: ["ReadWriteOnce"]
+          resources:
+            requests:
+              storage: 1Gi
+  podTemplate:
+    securityContext:
+      fsGroup: 65532

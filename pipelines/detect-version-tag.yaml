@@ -12,10 +12,17 @@ spec:
       description: "The semantic version tag found via git describe"
   steps:
     - name: find-semver
-      image: alpine:3.17
+      image: alpine/git:latest
       workingDir: /workspace/source
       script: |
+        #!/usr/bin/env sh
         set -xe
+        # Mark the directory as safe
+        git config --global --add safe.directory /workspace/source
+        # Explicitly fetch all tags
+        git fetch --tags
+        # Debug: list tags
+        git tag -l
         FULL_DESCRIBE=$(git describe --tags --abbrev=0)
         # FULL_DESCRIBE should be something like 'v0.1.0'
         # Validate it's a semver tag

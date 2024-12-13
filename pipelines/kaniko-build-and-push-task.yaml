@@ -1,0 +1,29 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: kaniko-build-and-push-task
+  namespace: default
+spec:
+  params:
+    - name: IMAGE
+      type: string
+      description: "Full image name including tag, e.g., quay.io/paulcapestany/toy-service:v0.1.0-abc1234"
+  workspaces:
+    - name: source
+  steps:
+    - name: build-and-push
+      image: gcr.io/kaniko-project/executor:latest
+      args:
+        - "--dockerfile=/workspace/source/Dockerfile"
+        - "--context=/workspace/source"
+        - "--destination=$(params.IMAGE)"
+        - "--cache=true"
+        - "--verbosity=info"
+      volumeMounts:
+        - name: docker-config
+          mountPath: /kaniko/.docker/config.json
+          subPath: .dockerconfigjson
+  volumes:
+    - name: docker-config
+      secret:
+        secretName: quay-credentials

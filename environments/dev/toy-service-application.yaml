@@ -11,6 +11,7 @@ metadata:
     argocd-image-updater.argoproj.io/toy-service.update-strategy: "semver"  
     # This ensures that pre-release versions (like those with -abc1234) are considered for updates
     argocd-image-updater.argoproj.io/toy-service.versionConstraint: ">0.1.0-0"
+    argocd-image-updater.argoproj.io/write-back-method: "git"
 spec:
   project: default
   source:

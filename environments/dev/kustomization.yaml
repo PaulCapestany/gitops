@@ -1,3 +1,4 @@
-# Placeholder if we ever want to Kustomize additional overlays.
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
 resources:
   - toy-service-application.yaml

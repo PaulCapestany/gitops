@@ -16,7 +16,7 @@ spec:
   project: default
   source:
     repoURL: 'https://github.com/paulcapestany/gitops.git'
-    path: 'helm/toy-service'
+    path: 'helm/bitiq'
     targetRevision: HEAD
     helm:
       valueFiles:

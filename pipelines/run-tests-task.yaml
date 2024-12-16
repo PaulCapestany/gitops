@@ -24,13 +24,13 @@ spec:
         mv kubeconform /usr/local/bin/kubeconform
 
         # Helm lint
-        helm lint /workspace/source/gitops/helm/toy-service
+        helm lint /workspace/source/gitops/helm/bitiq
 
         # Template and validate with kubeconform
-        helm template dev /workspace/source/gitops/helm/toy-service -f /workspace/source/gitops/helm/toy-service/values-dev.yaml > dev-rendered.yaml
-        helm template prod /workspace/source/gitops/helm/toy-service -f /workspace/source/gitops/helm/toy-service/values-prod.yaml > prod-rendered.yaml
+        helm template dev /workspace/source/gitops/helm/bitiq -f /workspace/source/gitops/helm/bitiq/values-dev.yaml > dev-rendered.yaml
+        helm template prod /workspace/source/gitops/helm/bitiq -f /workspace/source/gitops/helm/bitiq/values-prod.yaml > prod-rendered.yaml
         kubeconform -strict -ignore-missing-schemas dev-rendered.yaml
         kubeconform -strict -ignore-missing-schemas prod-rendered.yaml
 
         # Helm unittest
-        helm unittest /workspace/source/gitops/helm/toy-service
+        helm unittest /workspace/source/gitops/helm/bitiq

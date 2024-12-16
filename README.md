@@ -1,14 +1,14 @@
 # GitOps Repository
 
 This repository manages the deployment of the bitiq microservices (including toy-service) using GitOps principles. It leverages:
-- A single Helm chart (located in `helm/toy-service`) to deploy services to multiple environments (dev, prod) via separate values files.
+- A single Helm chart (located in `helm/bitiq`) to deploy services to multiple environments (dev, prod) via separate values files.
 - Argo CD for continuous delivery and synchronization of Kubernetes manifests from this repo to the cluster.
 - Argo CD Image Updater to automatically update the image tags when new versions are pushed to the registry.
 - Tekton-based OpenShift Pipelines to build, test, and push images to Quay.io.
 
 **Key Concepts:**
 - **Single Helm Chart:**  
-  The chart in `helm/toy-service` defines templates for deployments, services, ingresses, etc. `values.yaml` holds shared defaults. `values-dev.yaml` and `values-prod.yaml` override these defaults for each environment.
+  The chart in `helm/bitiq` defines templates for deployments, services, ingresses, etc. `values.yaml` holds shared defaults. `values-dev.yaml` and `values-prod.yaml` override these defaults for each environment.
 - **Environments Directories (`environments/dev`, `environments/prod`):**  
   Each environment has its own Argo CD Application manifest referencing the Helm chart and the appropriate values files. `kustomization.yaml` files can be used if you wish to layer additional configurations.
 - **Argo CD Image Updater (`argocd-image-updater`)**:  
@@ -30,7 +30,7 @@ This repository manages the deployment of the bitiq microservices (including toy
 - Production changes require a PR against the `environments/prod/` manifests. Protected branches and CODEOWNERS can ensure only trusted maintainers can approve merges.
 
 **Testing:**
-- `helm unittest` tests are defined in `helm/toy-service/tests/unittest.yaml`.
+- `helm unittest` tests are defined in `helm/bitiq/tests/unittest.yaml`.
 - The GitHub workflow in `.github/workflows/ci-checks.yaml` runs linting (e.g., `helm lint`, `kubeconform`) and unit tests on PRs.
 
 **Rollback:**

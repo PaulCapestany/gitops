@@ -10,6 +10,7 @@ metadata:
   labels:
     {{- include "bitiq.labels" $ | nindent 4 }}
     app.kubernetes.io/component: {{ $service.name }}
+    app.kubernetes.io/service-version: "{{ $service.name }}-{{ $service.tag }}"
 spec:
   rules:
     - host: {{ $service.ingress.hostname }}

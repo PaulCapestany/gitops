@@ -4,5 +4,5 @@ description: A Helm chart deploying multiple bitiq microservices.
 type: application
 version: 0.2.0
 # appVersion will be updated automatically via CI. Example format:
-# appVersion: "serviceA:0.1.2-abc1234-serviceB:0.3.0-xyz1234"
-appVersion: "toy-service:0.2.1-0bf65de"
+# appVersion: "toy-service-0.2.1-0bf65de_service-A-0.1.2-abc1234_service-B-0.3.0-xyz1234"
+appVersion: "toy-service-0.2.1-0bf65de"

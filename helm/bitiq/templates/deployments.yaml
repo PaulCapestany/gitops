@@ -9,6 +9,7 @@ metadata:
   labels:
     {{- include "bitiq.labels" $ | nindent 4 }}
     app.kubernetes.io/component: {{ $service.name }}
+    app.kubernetes.io/service-version: "{{ $service.name }}-{{ $service.tag }}"
 spec:
   replicas: {{ $service.replicaCount | default 1 }}
   selector:

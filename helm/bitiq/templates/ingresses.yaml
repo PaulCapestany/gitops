@@ -1,0 +1,26 @@
+{{- /*
+This template creates an Ingress for services that have ingress.enabled: true
+*/ -}}
+{{- range $index, $service := .Values.services }}
+{{- if $service.ingress.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ include "bitiq.fullname" $ }}-{{ $service.name }}
+  labels:
+    {{- include "bitiq.labels" $ | nindent 4 }}
+    app.kubernetes.io/component: {{ $service.name }}
+spec:
+  rules:
+    - host: {{ $service.ingress.hostname }}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ include "bitiq.fullname" $ }}-{{ $service.name }}
+                port:
+                  number: {{ $.Values.global.servicePort }}
+{{- end }}
+{{- end }}

@@ -1,0 +1,10 @@
+Thank you for installing the bitiq chart!
+
+This chart deploys multiple services defined in the values files.
+
+To check the deployed services:
+  kubectl get svc,deploy,ing -l app.kubernetes.io/instance=<release-name>
+
+If you configured ingress and DNS, access the services via their defined hostnames.
+
+Rollback is as simple as reverting to a previous commit in your GitOps repo and letting Argo CD sync.

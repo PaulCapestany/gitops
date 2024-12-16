@@ -1,6 +1,0 @@
-apiVersion: v2
-name: toy-service
-description: A Helm chart for deploying the toy-service microservice.
-type: application
-version: 0.1.0
-appVersion: "v0.1.0" # Will be updated by CI or manually to reflect service version combinations.

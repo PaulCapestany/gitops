@@ -1,0 +1,21 @@
+{{- /*
+This template creates a Service for each service in the array.
+*/ -}}
+{{- range $index, $service := .Values.services }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "bitiq.fullname" $ }}-{{ $service.name }}
+  labels:
+    {{ include "bitiq.labels" $ | nindent 4 }}
+    app.kubernetes.io/component: {{ $service.name }}
+spec:
+  type: ClusterIP
+  ports:
+    - port: {{ $.Values.global.servicePort }}
+      targetPort: {{ $.Values.global.servicePort }}
+      name: http
+  selector:
+    app.kubernetes.io/instance: {{ $.Release.Name }}
+    app.kubernetes.io/component: {{ $service.name }}
+{{- end }}

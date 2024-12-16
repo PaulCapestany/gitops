@@ -17,14 +17,14 @@ jobs:
       - name: Install helm unittest plugin
         run: helm plugin install https://github.com/helm-unittest/helm-unittest
       - name: Helm Lint
-        run: helm lint helm/toy-service
+        run: helm lint helm/bitiq
       - name: Helm Template & Kubeconform
         run: |
-          helm template dev helm/toy-service -f helm/toy-service/values-dev.yaml > dev-rendered.yaml
-          helm template prod helm/toy-service -f helm/toy-service/values-prod.yaml > prod-rendered.yaml
+          helm template dev helm/bitiq -f helm/bitiq/values-dev.yaml > dev-rendered.yaml
+          helm template prod helm/bitiq -f helm/bitiq/values-prod.yaml > prod-rendered.yaml
           # Install kubeconform
           curl -L https://github.com/yannh/kubeconform/releases/download/v0.4.13/kubeconform-linux-amd64.tar.gz | tar xz
           ./kubeconform -strict -ignore-missing-schemas dev-rendered.yaml
           ./kubeconform -strict -ignore-missing-schemas prod-rendered.yaml
       - name: Helm Unittest
-        run: helm unittest helm/toy-service
+        run: helm unittest helm/bitiq

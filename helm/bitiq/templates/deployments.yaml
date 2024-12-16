@@ -1,0 +1,37 @@
+{{- /*
+This template iterates over .Values.services and creates a Deployment for each service.
+*/ -}}
+{{- range $index, $service := .Values.services }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "bitiq.fullname" $ }}-{{ $service.name }}
+  labels:
+    {{- include "bitiq.labels" $ | nindent 4 }}
+    app.kubernetes.io/component: {{ $service.name }}
+spec:
+  replicas: {{ $service.replicaCount | default 1 }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: {{ $.Release.Name }}
+      app.kubernetes.io/component: {{ $service.name }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/instance: {{ $.Release.Name }}
+        app.kubernetes.io/component: {{ $service.name }}
+    spec:
+      containers:
+        - name: {{ $service.name }}
+          image: "{{ $service.repository }}:{{ $service.tag }}"
+          imagePullPolicy: {{ $.Values.global.imagePullPolicy }}
+          ports:
+            - containerPort: {{ $.Values.global.servicePort }}
+          resources:
+            requests:
+              cpu: {{ $.Values.global.resources.requests.cpu }}
+              memory: {{ $.Values.global.resources.requests.memory }}
+            limits:
+              cpu: {{ $.Values.global.resources.limits.cpu }}
+              memory: {{ $.Values.global.resources.limits.memory }}
+{{- end }}

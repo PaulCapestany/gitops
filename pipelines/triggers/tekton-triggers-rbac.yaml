@@ -1,0 +1,51 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: tekton-triggers-read
+  namespace: default
+rules:
+  - apiGroups: ["triggers.tekton.dev"]
+    resources:
+      - triggerbindings
+      - triggertemplates
+      - triggers
+      - eventlisteners
+      - interceptors
+    verbs: ["get", "list", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: tekton-triggers-read-binding
+  namespace: default
+subjects:
+  - kind: ServiceAccount
+    name: pipeline-sa
+    namespace: default
+roleRef:
+  kind: Role
+  name: tekton-triggers-read
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: tekton-triggers-clusterinterceptors-read
+rules:
+  - apiGroups: ["triggers.tekton.dev"]
+    resources:
+      - clusterinterceptors
+    verbs: ["get", "list", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: tekton-triggers-clusterinterceptors-read-binding
+subjects:
+  - kind: ServiceAccount
+    name: pipeline-sa
+    namespace: default
+roleRef:
+  kind: ClusterRole
+  name: tekton-triggers-clusterinterceptors-read
+  apiGroup: rbac.authorization.k8s.io

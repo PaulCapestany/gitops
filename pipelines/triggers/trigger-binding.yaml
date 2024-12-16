@@ -1,0 +1,14 @@
+apiVersion: triggers.tekton.dev/v1beta1
+kind: TriggerBinding
+metadata:
+  name: toy-service-github-push-binding
+  namespace: default
+spec:
+  # Extract parameters from the GitHub push event payload
+  params:
+    - name: git-url
+      value: "$(body.repository.clone_url)"
+    - name: git-revision
+      value: "$(body.ref)"
+    - name: fullSha
+      value: "$(body.after)"

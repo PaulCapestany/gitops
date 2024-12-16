@@ -4,12 +4,18 @@ metadata:
   name: pipeline-role
   namespace: default
 rules:
+  - apiGroups: [""]
+    resources: ["pods", "pods/log", "events"]
+    verbs: ["get", "list", "watch", "create", "patch"]
   - apiGroups: ["tekton.dev"]
-    resources: ["pipelineruns", "taskruns"]
+    resources: ["pipelineruns", "taskruns",  "pipelines", "tasks"]
     verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
   - apiGroups: [""]
     resources: ["pods", "secrets", "configmaps"]
     verbs: ["get", "list", "watch"]
+  - apiGroups: ["triggers.tekton.dev"]
+    resources: ["triggers", "triggerbindings", "triggertemplates", "eventlisteners", "interceptors"]
+    verbs: ["get", "list", "watch"]    
     
 ---
 apiVersion: rbac.authorization.k8s.io/v1

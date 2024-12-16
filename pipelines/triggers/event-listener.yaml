@@ -1,0 +1,28 @@
+apiVersion: triggers.tekton.dev/v1beta1
+kind: EventListener
+metadata:
+  name: toy-service-listener
+  namespace: default
+spec:
+  serviceAccountName: pipeline-sa
+  triggers:
+    - name: github-push-to-toy-service
+      interceptors:
+        - ref:
+            name: "github"
+          params:
+            - name: "secretRef"
+              value:
+                secretName: github-webhook-secret
+                secretKey: secret
+            - name: "eventTypes"
+              value: ["push"]
+        - ref:
+            name: "cel"
+          params:
+            - name: "filter"
+              value: "body.ref == 'refs/heads/main'"
+      bindings:
+        - ref: toy-service-github-push-binding
+      template:
+        ref: toy-service-build-template

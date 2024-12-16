@@ -7,16 +7,7 @@ Revisit this list regularly as priorities and tasks may change.
 
 ### High Priority
 
-1. **Automate Pipeline Triggers from toy-service Repo Commits**  
-   - **Goal**: On every new commit to `toy-service` main, trigger the Tekton pipeline to build & push new images automatically.  
-   - **Tasks**:
-     - [ ] Set up Tekton TriggerBindings, TriggerTemplates, and EventListeners in `pipelines/`.
-     - [ ] Create a GitHub webhook in `toy-service` repo pointing to the Tekton EventListener route.
-     - [ ] Validate: commit to `toy-service` → Tekton pipeline runs → new image in Quay.io → Argo CD updates dev environment.
-   - **Related Docs**: [Tekton Triggers](https://tekton.dev/docs/triggers/)
-   - **Outcome**: Automated CI/CD pipeline from code to cluster.
-
-2. **Argo CD Image Updater Git Integration**  
+1. **Argo CD Image Updater Git Integration**  
    - **Goal**: Ensure image updates commit changes back to this repo, keeping Git as the source of truth.  
    - **Tasks**:
      - [ ] Add Git credentials as a Kubernetes Secret (if not done).
@@ -25,7 +16,7 @@ Revisit this list regularly as priorities and tasks may change.
    - **Related Docs**: [Argo CD Image Updater](https://argocd-image-updater.readthedocs.io/)
    - **Outcome**: Full GitOps loop ensuring manifests in Git reflect the running state.
 
-3. **Documentation Consistency & Clarity**  
+2. **Documentation Consistency & Clarity**  
    - **Goal**: Improve on-boarding experience.  
    - **Tasks**:
      - [ ] Add `docs/architecture.md` with a system diagram of commit-to-prod flow.
@@ -37,21 +28,29 @@ Revisit this list regularly as priorities and tasks may change.
 
 ### Medium Priority
 
-5. **Automated `appVersion` Updates in Chart.yaml**  
+3.  **Integrate Pipeline Manifests into Argo CD Management**
+   - **Goal**: Ensure that Tekton pipeline and trigger manifests are also managed by Argo CD, eliminating the need for manual `oc apply` steps.
+   - **Tasks**:
+     - [ ] Create a new Argo CD Application resource referencing the `pipelines/` directory.
+     - [ ] Commit the Application YAML to `gitops` so Argo CD can sync Tekton resources automatically.
+     - [ ] Confirm that changes to pipeline manifests in `pipelines/` are reflected in the cluster without manual intervention.
+   - **Outcome**: Pipelines and triggers become fully GitOps-managed, ensuring a consistent, automated workflow.
+  
+4. **Automated `appVersion` Updates in Chart.yaml**  
    - **Goal**: Dynamically update `appVersion` with all service versions.  
    - **Tasks**:
      - [ ] Add a script (e.g., in Tekton pipeline) that gathers service versions and commit hashes.
      - [ ] Update `Chart.yaml` before `helm upgrade` to track exact versions deployed.
    - **Outcome**: Easier debugging and rollbacks.
 
-6. **Contributor Guide (`CONTRIBUTING.md`)**  
+5. **Contributor Guide (`CONTRIBUTING.md`)**  
    - **Goal**: Provide guidelines for contributors.  
    - **Tasks**:
      - [ ] Write `CONTRIBUTING.md` covering branching, testing, and environment setup.
      - [ ] Reference `TODO.md` and `docs/` for architecture details.
    - **Outcome**: Smooth contributor onboarding.
 
-7. **Policy Checks for Production Deployments**  
+6. **Policy Checks for Production Deployments**  
    - **Goal**: Enforce policies before deploying to production.  
    - **Tasks**:
      - [ ] Introduce OPA or Kyverno policy files in `policies/`.

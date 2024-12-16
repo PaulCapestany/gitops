@@ -1,91 +1,94 @@
 # TODOs for GitOps Repository
 
-This document tracks actionable tasks and improvements for the GitOps repository and associated workflows.  
-They are grouped by priority, acknowledging that some tasks depend on having foundational elements fully working before adding complexity.
+This document tracks actionable tasks and improvements for the GitOps repository.  
+Revisit this list regularly as priorities and tasks may change.
 
 ---
 
 ### High Priority
 
 1. **Automate Pipeline Triggers from toy-service Repo Commits**  
-   - **Goal**: Ensure that any new commit to `toy-service` (and eventually other services) automatically triggers the Tekton pipeline, producing a new image.  
+   - **Goal**: On every new commit to `toy-service` main, trigger the Tekton pipeline to build & push new images automatically.  
    - **Tasks**:
-     - Create Tekton TriggerBindings, TriggerTemplates, and EventListeners.
-     - Configure a GitHub webhook on the `toy-service` repo to call the EventListener endpoint.
-     - Validate that pushing a commit to `toy-service` main branch starts the pipeline.
-   - **Outcome**: Fully automated CI: commit → build → deploy → Git update.
+     - [ ] Set up Tekton TriggerBindings, TriggerTemplates, and EventListeners in `pipelines/`.
+     - [ ] Create a GitHub webhook in `toy-service` repo pointing to the Tekton EventListener route.
+     - [ ] Validate: commit to `toy-service` → Tekton pipeline runs → new image in Quay.io → Argo CD updates dev environment.
+   - **Related Docs**: [Tekton Triggers](https://tekton.dev/docs/triggers/)
+   - **Outcome**: Automated CI/CD pipeline from code to cluster.
 
-2. **Argo CD Image Updater Git Integration**
-   - **Goal**: Ensure that Git remains the single source of truth.
+2. **Argo CD Image Updater Git Integration**  
+   - **Goal**: Ensure image updates commit changes back to this repo, keeping Git as the source of truth.  
    - **Tasks**:
-     - Add Git credentials as a Kubernetes Secret for Argo CD Image Updater.
-     - Update Argo CD Image Updater configuration so it commits image tag changes to this repo.
-   - **Outcome**: Closed-loop GitOps workflow where the repo and cluster remain in sync.
+     - [ ] Add Git credentials as a Kubernetes Secret (if not done).
+     - [ ] Confirm Argo CD Image Updater config commits updated image tags to `environments/dev` manifests.
+     - [ ] Test the workflow: push a new image tag to Quay → verify updated manifests in Git → Argo CD syncs cluster.
+   - **Related Docs**: [Argo CD Image Updater](https://argocd-image-updater.readthedocs.io/)
+   - **Outcome**: Full GitOps loop ensuring manifests in Git reflect the running state.
 
-3. **Documentation Consistency & Clarity**
-   - **Goal**: Provide unified, high-quality documentation for easier onboarding.
+3. **Documentation Consistency & Clarity**  
+   - **Goal**: Improve on-boarding experience.  
    - **Tasks**:
-     - Cross-reference this `gitops` repo from the `toy-service` repo (and vice versa).
-     - Add architecture diagrams and explain directory structures (`helm/`, `environments/`, `pipelines/`, `policies/`).
-   - **Outcome**: Lower barrier to entry and clearer understanding of how repos interrelate.
+     - [ ] Add `docs/architecture.md` with a system diagram of commit-to-prod flow.
+     - [ ] Cross-reference `gitops` from `toy-service` README, so contributors know where to find deployment logic.
+     - [ ] Integrate architecture diagrams in `README.md` or `docs/`.
+   - **Outcome**: Clearer understanding and faster contributor onboarding.
 
 ---
 
 ### Medium Priority
 
-5. **Automated appVersion Updates & Naming Convention**
-   - **Goal**: Automate `appVersion` updates in the Helm chart to include semantic versions and commit hashes for all services.
+5. **Automated `appVersion` Updates in Chart.yaml**  
+   - **Goal**: Dynamically update `appVersion` with all service versions.  
    - **Tasks**:
-     - Implement a CI script to parse version tags and short commit SHAs for each service.
-     - Update `Chart.yaml`’s `appVersion` automatically before Helm upgrades.
-   - **Outcome**: Improved traceability and simpler rollbacks.
+     - [ ] Add a script (e.g., in Tekton pipeline) that gathers service versions and commit hashes.
+     - [ ] Update `Chart.yaml` before `helm upgrade` to track exact versions deployed.
+   - **Outcome**: Easier debugging and rollbacks.
 
-6. **Contributor Guide**
-   - **Goal**: Develop a `CONTRIBUTING.md` detailing how to propose changes, run tests, and navigate the codebase.
+6. **Contributor Guide (`CONTRIBUTING.md`)**  
+   - **Goal**: Provide guidelines for contributors.  
    - **Tasks**:
-     - Include branching strategies, semantic versioning rules, and testing instructions.
-     - Add a high-level architecture overview and references to `toy-service` and other services.
-   - **Outcome**: Easier onboarding and higher-quality contributions.
+     - [ ] Write `CONTRIBUTING.md` covering branching, testing, and environment setup.
+     - [ ] Reference `TODO.md` and `docs/` for architecture details.
+   - **Outcome**: Smooth contributor onboarding.
 
-7. **Future Policy Checks for Prod Deployments**
-   - **Goal**: Introduce automated policy checks (e.g., OPA, Kyverno) before promoting changes to prod.
+7. **Policy Checks for Production Deployments**  
+   - **Goal**: Enforce policies before deploying to production.  
    - **Tasks**:
-     - Add initial policy files under `policies/`.
-     - Integrate policy checking into CI workflows.
-   - **Outcome**: More secure, predictable production deployments.
+     - [ ] Introduce OPA or Kyverno policy files in `policies/`.
+     - [ ] Add CI step to check compliance before merging PRs to `environments/prod`.
+   - **Outcome**: More secure and compliant deployments.
 
 ---
 
 ### Lower Priority / Post-Basics
 
-8. **Secret Management with Vault**
-   - **Goal**: Replace static secrets with Vault for better security and rotation.
+8. **Secret Management with Vault**  
+   - **Goal**: Externalize secrets from manifests.  
    - **Tasks**:
-     - Integrate External Secrets Operator or similar.
-     - Update Helm charts to reference Vault-managed secrets.
-   - **Outcome**: Enhanced security posture and compliance.
+     - [ ] Integrate External Secrets Operator.
+     - [ ] Update Helm charts to pull secrets from Vault references.
+   - **Outcome**: Enhanced security and secret rotation practices.
 
-9. **Local Development Experience**
-   - **Goal**: Improve local dev setup, allowing contributors to run and test services locally without a full Kubernetes stack.
+9. **Local Development Setup**  
+   - **Goal**: Simplify local testing.  
    - **Tasks**:
-     - Provide `docs/local-development.md` with guidance.
-     - Potentially add a `docker-compose` setup for minimal local testing.
-   - **Outcome**: Faster iteration and easier debugging for contributors.
+     - [ ] Add `docs/local-development.md`.
+     - [ ] Consider `kind` or `minikube` guide for running `helm template` and `argocd` locally.
+   - **Outcome**: Faster iteration and contributor confidence before pushing changes.
 
-10. **Refine Directory Structures (If Needed)**
-    - **Goal**: Document reasoning behind directory layouts after restructuring for a single chart.
+10. **Directory Structure Documentation**  
+    - **Goal**: Explain directory layout.  
     - **Tasks**:
-      - Add a short explanation in `README.md` detailing each directory’s purpose.
-    - **Outcome**: Better contributor understanding of repo organization.
+      - [ ] Add notes in `README.md` explaining the purpose of `helm/`, `environments/`, `pipelines/`, and `policies/`.
+    - **Outcome**: Greater clarity for newcomers.
 
-11. **Integrate `alstr/todo-to-issue-action` for TODO Management**
-    - **Goal**: Automatically convert `TODO:` comments in the codebase into GitHub issues, linking them into the development workflow.
+11. **Integrate `alstr/todo-to-issue-action`**  
+    - **Goal**: Track code-level TODOs as GitHub Issues automatically.  
     - **Tasks**:
-      - Add and configure `alstr/todo-to-issue-action` GitHub Action.
-      - Optionally integrate with GitHub Projects to categorize and prioritize these automatically created issues.
-    - **Outcome**: Easier tracking of code-level TODOs, ensuring they don’t get lost and can be managed alongside other issues.
-    - **Note**: This is a “nice to have” after the foundational CI/CD and GitOps loops are stable.
+      - [ ] Configure `alstr/todo-to-issue-action`.
+      - [ ] Integrate with GitHub Projects to track tasks.
+    - **Outcome**: Streamlined task management, ensuring TODOs in code don’t get lost.
 
 ---
 
-**Note:** Priorities and tasks may shift as the project evolves. Revisit this list periodically to adjust priorities and add/remove tasks as needed.
+**Note:** Update this list as tasks are completed or new priorities emerge.

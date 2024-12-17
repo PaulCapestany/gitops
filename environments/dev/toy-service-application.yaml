@@ -1,6 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
+  namespace: openshift-gitops
   name: toy-service-dev
   labels:
     app.kubernetes.io/part-of: toy-service

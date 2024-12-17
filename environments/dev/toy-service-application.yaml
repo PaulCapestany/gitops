@@ -13,9 +13,9 @@ metadata:
     # This ensures that pre-release versions (like those with -abc1234) are considered for updates
     argocd-image-updater.argoproj.io/toy-service.versionConstraint: ">0.1.0-0"
     argocd-image-updater.argoproj.io/write-back-method: "git"
-    # argocd-image-updater.argoproj.io/toy-service.helm.values: "services[0].tag"
-    # argocd-image-updater.argoproj.io/toy-service.helm.valuefile: "values-dev.yaml"
-    # argocd-image-updater.argoproj.io/toy-service.helm.updateValueStrategy: "values"    
+    argocd-image-updater.argoproj.io/toy-service.helm.values: "services[0].tag"
+    argocd-image-updater.argoproj.io/toy-service.helm.valuefile: "values-dev.yaml"
+    argocd-image-updater.argoproj.io/toy-service.helm.updateValueStrategy: "values"    
 spec:
   project: default
   source:

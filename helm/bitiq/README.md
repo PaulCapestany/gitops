@@ -18,11 +18,11 @@ This chart deploys multiple bitiq microservices as a unified set. By managing al
 The `appVersion` field in `Chart.yaml` encodes the versions of all microservices currently deployed.
 
 **Format:**
-- For a single service: `<serviceName>-<semver>-<commitHash>`
+- For a single service: `<serviceName>-<semver>-commit.<commitHash>`
 - For multiple services: join each service entry with an underscore (`_`).
 
 **Example:**
-`toy-service-0.2.1-0bf65de_service-A-0.1.2-abc1234_service-B-0.3.0-xyz1234`
+`toy-service-0.2.1-commit.0bf65de_service-A-0.1.2-commit.abc1234_service-B-0.3.0-commit.xyz1234`
 
 **Allowed Characters:**
 - Only alphanumeric characters (`[A-Za-z0-9]`), `-`, `_`, and `.` are allowed.

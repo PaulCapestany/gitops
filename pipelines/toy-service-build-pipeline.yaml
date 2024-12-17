@@ -91,4 +91,4 @@ spec:
           workspace: source
       params:
         - name: IMAGE
-          value: "quay.io/paulcapestany/toy-service:$(tasks.detect-semver.results.semverTag)-$(tasks.transform-sha.results.shortSha)"
+          value: "quay.io/paulcapestany/toy-service:$(tasks.detect-semver.results.semverTag)-commit.$(tasks.transform-sha.results.shortSha)"

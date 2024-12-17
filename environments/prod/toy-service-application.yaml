@@ -8,11 +8,12 @@ metadata:
     environment: prod
   annotations:
     argocd-image-updater.argoproj.io/image-list: "toy-service=quay.io/paulcapestany/toy-service"
-    # The image tags should look like: <semver>-<sha>, e.g. v0.1.0-abc1234
+    # The image tags should look like: <semver>-commit.<sha>, e.g. v0.1.0-commit.abc1234
     argocd-image-updater.argoproj.io/toy-service.update-strategy: "semver"  
     # This ensures that pre-release versions (like those with -abc1234) are considered for updates
     argocd-image-updater.argoproj.io/toy-service.versionConstraint: ">0.1.0-0"
     argocd-image-updater.argoproj.io/write-back-method: "git"
+    argocd-image-updater.argoproj.io/toy-service.helm.values: "services[0].tag" 
 spec:
   project: default
   source:

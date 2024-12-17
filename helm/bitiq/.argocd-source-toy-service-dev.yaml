@@ -4,5 +4,5 @@ helm:
     value: quay.io/paulcapestany/toy-service
     forcestring: true
   - name: image.tag
-    value: v0.2.8-commit.268a13b
+    value: v0.2.9-commit.b13ba00
     forcestring: true

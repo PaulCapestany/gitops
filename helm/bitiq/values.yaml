@@ -11,21 +11,11 @@ global:
       memory: 256Mi
   servicePort: 8080
 
-# An array of services. Each service entry can define:
-# - name: unique service name
-# - repository: image repo (e.g. quay.io/org/service)
-# - tag: image tag (e.g. v0.1.0-abcdefg)
-# - replicaCount: number of pods for this service
-# - ingress:
-#     enabled: bool
-#     hostname: string (e.g. service-dev.bitiq.io)
-# - hpa:
-#     enabled: bool
-#     minReplicas: int
-#     maxReplicas: int
-#     cpuTargetUtilization: int (e.g. 80)
+# Dictionary of services deployed by this chart.
+# Keys are service names, values are service configurations.
 services:
-  - name: toy-service
+  toy-service:
+    name: toy-service
     repository: quay.io/paulcapestany/toy-service
     tag: v0.1.0-abc1234
     replicaCount: 1

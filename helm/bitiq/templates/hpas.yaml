@@ -1,21 +1,18 @@
-{{- /*
-This template creates a HorizontalPodAutoscaler if hpa.enabled: true.
-*/ -}}
-{{- range $index, $service := .Values.services }}
+{{- range $name, $service := .Values.services }}
 {{- if $service.hpa.enabled }}
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
-  name: {{ include "bitiq.fullname" $ }}-{{ $service.name }}
+  name: {{ include "bitiq.fullname" $ }}-{{ $name }}
   labels:
     {{- include "bitiq.labels" $ | nindent 4 }}
-    app.kubernetes.io/component: {{ $service.name }}
-    app.kubernetes.io/service-version: "{{ $service.name }}-{{ $service.tag }}"
+    app.kubernetes.io/component: {{ $name }}
+    app.kubernetes.io/service-version: "{{ $name }}-{{ $service.tag }}"
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: {{ include "bitiq.fullname" $ }}-{{ $service.name }}
+    name: {{ include "bitiq.fullname" $ }}-{{ $name }}
   minReplicas: {{ $service.hpa.minReplicas | default 1 }}
   maxReplicas: {{ $service.hpa.maxReplicas | default 5 }}
   metrics:

@@ -1,13 +1,13 @@
-# Prod environment overrides
 services:
-  - name: toy-service
+  toy-service:
+    name: toy-service
     repository: quay.io/paulcapestany/toy-service
-    # the tag value below is automatically set by the CI/CD pipeline (argocd-image-updater)
+    # the tag below is updated by Argo CD Image Updater
     tag: v0.2.12-commit.7a4bc53
     replicaCount: 2
     ingress:
       enabled: true
-      hostname: toy-service-dev.bitiq.io
+      hostname: toy-service-prod.bitiq.io
     hpa:
       enabled: true
       minReplicas: 1

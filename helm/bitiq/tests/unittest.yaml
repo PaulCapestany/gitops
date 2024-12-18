@@ -1,7 +1,7 @@
-suite: 
+suite:
   - it: "Should render one Deployment per configured service"
     set:
-      - services[0].name=toy-service
+      - services.toy-service.name=toy-service
     asserts:
       - hasDocuments:
           count: 1
@@ -9,9 +9,9 @@ suite:
 
   - it: "Should set correct image tag in Deployment"
     set:
-      - services[0].name=toy-service
-      - services[0].repository=quay.io/paulcapestany/toy-service
-      - services[0].tag=v0.1.1-dev4567
+      - services.toy-service.name=toy-service
+      - services.toy-service.repository=quay.io/paulcapestany/toy-service
+      - services.toy-service.tag=v0.1.1-dev4567
     asserts:
       - match:
           path: "spec.template.spec.containers[0].image"
@@ -19,9 +19,9 @@ suite:
 
   - it: "Should create Ingress if enabled"
     set:
-      - services[0].name=toy-service
-      - services[0].ingress.enabled=true
-      - services[0].ingress.hostname=toy-service-dev.bitiq.io
+      - services.toy-service.name=toy-service
+      - services.toy-service.ingress.enabled=true
+      - services.toy-service.ingress.hostname=toy-service-dev.bitiq.io
     asserts:
       - hasDocuments:
           kind: Ingress

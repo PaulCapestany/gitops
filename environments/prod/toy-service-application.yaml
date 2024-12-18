@@ -7,16 +7,15 @@ metadata:
     app.kubernetes.io/part-of: toy-service
     environment: prod
   annotations:
+    # NOTE: argocd-image-updater annotations requre the service alias to only by alphanumeric characters (e.g. no hyphens)
     argocd-image-updater.argoproj.io/image-list: "toyservice=quay.io/paulcapestany/toy-service:>0.2.0"
-    # The image tags should look like: <semver>-commit.<sha>, e.g. v0.1.0-commit.abc1234
-    argocd-image-updater.argoproj.io/toyservice.update-strategy: "semver"  
-    # This ensures that pre-release versions (like those with -commit.abc1234) are considered for updates
+    argocd-image-updater.argoproj.io/toyservice.update-strategy: "semver"
     argocd-image-updater.argoproj.io/toyservice.versionConstraint: ">0.1.0-0"
     argocd-image-updater.argoproj.io/write-back-method: "git"
-    argocd-image-updater.argoproj.io/write-back-target: "helmvalues:values-dev.yaml"    
+    argocd-image-updater.argoproj.io/write-back-target: "helmvalues:values-prod.yaml"
     argocd-image-updater.argoproj.io/git-branch: main
-    argocd-image-updater.argoproj.io/toyservice.helm.image-name: services[0].repository
-    argocd-image-updater.argoproj.io/toyservice.helm.image-tag: services[0].tag
+    argocd-image-updater.argoproj.io/toyservice.helm.image-name: services."toy-service".repository
+    argocd-image-updater.argoproj.io/toyservice.helm.image-tag: services."toy-service".tag
 spec:
   project: default
   source:
@@ -33,5 +32,3 @@ spec:
     automated:
       prune: true
       selfHeal: true
-    # For production, you might disable auto-sync and require manual sync steps.
-    # This can be adjusted based on your policy.

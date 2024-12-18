@@ -1,11 +1,13 @@
-# Dev environment overrides
 services:
-  - name: toy-service
-    repository: quay.io/paulcapestany/toy-service
-    tag: v0.2.12-commit.7a4bc53
-    replicaCount: 1
-    ingress:
-      enabled: true
-      hostname: toy-service-dev.bitiq.io
-    hpa:
-      enabled: false
+- name: toy-service
+  repository: quay.io/paulcapestany/toy-service
+  tag: v0.2.12-commit.7a4bc53
+  replicaCount: 1
+  ingress:
+    enabled: true
+    hostname: toy-service-dev.bitiq.io
+  hpa:
+    enabled: false
+toyservice:
+  tag: v0.2.13-commit.2d620cd
+  repository: quay.io/paulcapestany/toy-service

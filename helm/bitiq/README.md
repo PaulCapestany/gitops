@@ -22,7 +22,7 @@ The `appVersion` field in `Chart.yaml` encodes the versions of all microservices
 - For multiple services: join each service entry with an underscore (`_`).
 
 **Example:**
-`toy-service-0.2.1-commit.0bf65de_service-A-0.1.2-commit.abc1234_service-B-0.3.0-commit.xyz1234`
+`toy-service-v0.2.1-commit.0bf65de_service-A-v0.1.2-commit.abc1234_service-B-v0.3.0-commit.xyz1234`
 
 **Allowed Characters:**
 - Only alphanumeric characters (`[A-Za-z0-9]`), `-`, `_`, and `.` are allowed.

@@ -2,7 +2,7 @@ apiVersion: v2
 name: bitiq
 description: A Helm chart deploying multiple bitiq microservices.
 type: application
-version: 0.2.10
+version: 0.2.11
 # appVersion will be updated automatically via CI. Example format:
-# appVersion: "toy-service-0.2.1-commit.0bf65de_service-A-0.1.2-commit.abc1234_service-B-0.3.0-commit.xyz1234"
-appVersion: "toy-service-0.2.1-commit.0bf65de"
+# appVersion: "toy-service-v0.2.1-commit.0bf65de_service-A-v0.1.2-commit.abc1234_service-B-v0.3.0-commit.xyz1234"
+appVersion: "toy-service-v0.2.12-commit.7a4bc53"

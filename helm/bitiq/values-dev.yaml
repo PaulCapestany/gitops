@@ -9,5 +9,5 @@ services:
   hpa:
     enabled: false
 services[0]:
-  tag: v0.2.15-commit.61f632e
+  tag: v0.2.16-commit.0c6a6ca
   repository: quay.io/paulcapestany/toy-service

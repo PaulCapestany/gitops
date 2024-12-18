@@ -2,7 +2,7 @@ services:
   toy-service:
     name: toy-service
     repository: quay.io/paulcapestany/toy-service
-    tag: v0.2.19-commit.c0013e6
+    tag: v0.2.20-commit.334a36b
     replicaCount: 1
     ingress:
       enabled: true

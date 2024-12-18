@@ -9,4 +9,6 @@ services:
       hostname: toy-service-dev.bitiq.io
     hpa:
       enabled: false
-
+services['toy-service']:
+  tag: v0.2.16-commit.0c6a6ca
+  repository: quay.io/paulcapestany/toy-service

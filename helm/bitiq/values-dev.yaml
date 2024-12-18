@@ -1,13 +1,11 @@
 services:
 - name: toy-service
   repository: quay.io/paulcapestany/toy-service
-  tag: v0.2.12-commit.7a4bc53
+  tag: v0.2.14-commit.f85a921
   replicaCount: 1
   ingress:
     enabled: true
     hostname: toy-service-dev.bitiq.io
   hpa:
     enabled: false
-toyservice:
-  tag: v0.2.14-commit.f85a921
-  repository: quay.io/paulcapestany/toy-service
+

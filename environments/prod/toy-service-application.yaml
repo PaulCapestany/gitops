@@ -15,8 +15,8 @@ metadata:
     argocd-image-updater.argoproj.io/write-back-method: "git"
     argocd-image-updater.argoproj.io/write-back-target: "helmvalues:values-dev.yaml"    
     argocd-image-updater.argoproj.io/git-branch: main
-    argocd-image-updater.argoproj.io/toyservice.helm.image-name: toyservice.repository
-    argocd-image-updater.argoproj.io/toyservice.helm.image-tag: toyservice.tag
+    argocd-image-updater.argoproj.io/toyservice.helm.image-name: services[0].repository
+    argocd-image-updater.argoproj.io/toyservice.helm.image-tag: services[0].tag
 spec:
   project: default
   source:

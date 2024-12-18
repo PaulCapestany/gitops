@@ -1,8 +1,0 @@
-helm:
-  parameters:
-  - name: image.name
-    value: quay.io/paulcapestany/toy-service
-    forcestring: true
-  - name: image.tag
-    value: v0.2.9-commit.b13ba00
-    forcestring: true

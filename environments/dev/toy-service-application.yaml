@@ -7,16 +7,16 @@ metadata:
     app.kubernetes.io/part-of: toy-service
     environment: dev
   annotations:
-    argocd-image-updater.argoproj.io/image-list: "toy-service=quay.io/paulcapestany/toy-service:>0.2.0"
+    argocd-image-updater.argoproj.io/image-list: "toyservice=quay.io/paulcapestany/toy-service:>0.2.0"
     # The image tags should look like: <semver>-commit.<sha>, e.g. v0.1.0-commit.abc1234
-    argocd-image-updater.argoproj.io/toy-service.update-strategy: "semver"  
-    # This ensures that pre-release versions (like those with -abc1234) are considered for updates
-    argocd-image-updater.argoproj.io/toy-service.versionConstraint: ">0.1.0-0"
+    argocd-image-updater.argoproj.io/toyservice.update-strategy: "semver"  
+    # This ensures that pre-release versions (like those with -commit.abc1234) are considered for updates
+    argocd-image-updater.argoproj.io/toyservice.versionConstraint: ">0.1.0-0"
     argocd-image-updater.argoproj.io/write-back-method: "git"
     argocd-image-updater.argoproj.io/write-back-target: "helmvalues:values-dev.yaml"    
     argocd-image-updater.argoproj.io/git-branch: main
-    argocd-image-updater.argoproj.io/toy-service.helm.image-name: services[0].repository
-    argocd-image-updater.argoproj.io/toy-service.helm.image-tag: services[0].tag
+    argocd-image-updater.argoproj.io/toyservice.helm.image-name: toyservice.repository
+    argocd-image-updater.argoproj.io/toyservice.helm.image-tag: toyservice.tag
 spec:
   project: default
   source:

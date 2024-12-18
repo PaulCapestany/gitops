@@ -2,7 +2,6 @@
 services:
   - name: toy-service
     repository: quay.io/paulcapestany/toy-service
-    # the tag value below is automatically set by the CI/CD pipeline (argocd-image-updater)
     tag: v0.2.1-0bf65de
     replicaCount: 1
     ingress:

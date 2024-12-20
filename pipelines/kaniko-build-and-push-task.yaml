@@ -1,7 +1,7 @@
 # The kaniko-build-and-push-task uses Kaniko’s caching features:
 # - --cache=true: Enable caching of layers
 # - --cache-dir: Directory for caching
-# - --cache-repo: A registry path to store cached layers
+# - --cache-repo: A registry path to store cached layers from Quay (optional)
 # - --verbosity=debug: Verbose logging for easier debugging
 # The PVC mounted at /kaniko/cache ensures cached layers persist between builds.
 # The robust error checking and logging ensures any issues are visible and builds fail fast.
@@ -31,31 +31,17 @@ spec:
         ls -al /workspace/source || { echo "[ERROR] Failed to list source workspace."; exit 1; }
         echo "[INFO] Pre-check completed successfully."
     - name: build-and-push
-      image: gcr.io/kaniko-project/executor:debug
-      script: |
-        #!/usr/bin/env sh
-        set -xe
-        echo "[INFO] Starting Kaniko build with caching enabled."
-        echo "[INFO] Using image: $(params.IMAGE)"
-        echo "[INFO] Checking cache directory state before build:"
-        ls -al /kaniko/cache || echo "[WARN] No cache directory content yet."
-
-        # Run Kaniko executor with caching enabled
-        # Note: --cache-repo is optional and can be changed if you have a dedicated cache repo.
-        /kaniko/executor \
-          --dockerfile=/workspace/source/Dockerfile \
-          --context=/workspace/source \
-          --destination=$(params.IMAGE) \
-          --cache=true \
-          --cache-dir=/kaniko/cache \
-          --verbosity=debug \
-          --cache-repo=$(echo $(params.IMAGE) | sed 's|\(.*\)/\(.*\)|\1/cache-repo|') || { echo "[ERROR] Kaniko build failed!"; exit 1; }
-        
-        echo "[INFO] Kaniko build and push completed."
-        echo "[INFO] Checking cache directory state after build:"
-        ls -al /kaniko/cache || { echo "[ERROR] Failed to list cache directory after build."; exit 1; }
-
-        echo "success" > $(results.build-result.path)
+      image: gcr.io/kaniko-project/executor:latest
+      command:
+        - "/kaniko/executor"
+      args:
+        - "--dockerfile=/workspace/source/Dockerfile"
+        - "--context=/workspace/source"
+        - "--destination=$(params.IMAGE)"
+        - "--cache=true"
+        - "--cache-dir=/kaniko/cache"
+        - "--cache-repo=quay.io/paulcapestany/cache-repo"
+        - "--verbosity=debug"        
       volumeMounts:
         - name: kaniko-cache
           mountPath: /kaniko/cache

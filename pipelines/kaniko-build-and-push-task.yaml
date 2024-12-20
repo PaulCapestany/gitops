@@ -39,8 +39,9 @@ spec:
         echo "[INFO] Using image: $(params.IMAGE)"
         echo "[INFO] Checking cache directory state before build:"
         ls -al /kaniko/cache || echo "[WARN] No cache directory content yet."
-        
+
         # Run Kaniko executor with caching enabled
+        # Note: --cache-repo is optional and can be changed if you have a dedicated cache repo.
         /kaniko/executor \
           --dockerfile=/workspace/source/Dockerfile \
           --context=/workspace/source \
@@ -53,12 +54,18 @@ spec:
         echo "[INFO] Kaniko build and push completed."
         echo "[INFO] Checking cache directory state after build:"
         ls -al /kaniko/cache || { echo "[ERROR] Failed to list cache directory after build."; exit 1; }
-        
+
         echo "success" > $(results.build-result.path)
       volumeMounts:
         - name: kaniko-cache
           mountPath: /kaniko/cache
+        - name: docker-config
+          mountPath: /kaniko/.docker/config.json
+          subPath: .dockerconfigjson
   volumes:
     - name: kaniko-cache
       persistentVolumeClaim:
         claimName: kaniko-cache-pvc
+    - name: docker-config
+      secret:
+        secretName: quay-credentials

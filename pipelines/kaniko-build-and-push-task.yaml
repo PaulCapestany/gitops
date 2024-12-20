@@ -55,9 +55,9 @@ spec:
         ls -al /kaniko/cache || { echo "[ERROR] Failed to list cache directory after build."; exit 1; }
         
         echo "success" > $(results.build-result.path)
-    volumeMounts:
-      - name: kaniko-cache
-        mountPath: /kaniko/cache
+      volumeMounts:
+        - name: kaniko-cache
+          mountPath: /kaniko/cache
   volumes:
     - name: kaniko-cache
       persistentVolumeClaim:

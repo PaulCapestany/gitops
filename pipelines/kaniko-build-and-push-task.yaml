@@ -31,7 +31,7 @@ spec:
         ls -al /workspace/source || { echo "[ERROR] Failed to list source workspace."; exit 1; }
         echo "[INFO] Pre-check completed successfully."
     - name: build-and-push
-      image: gcr.io/kaniko-project/executor:latest
+      image: gcr.io/kaniko-project/executor:debug
       script: |
         #!/usr/bin/env sh
         set -xe

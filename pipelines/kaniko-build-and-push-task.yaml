@@ -1,3 +1,10 @@
+# The kaniko-build-and-push-task uses Kaniko’s caching features:
+# - --cache=true: Enable caching of layers
+# - --cache-dir: Directory for caching
+# - --cache-repo: A registry path to store cached layers
+# - --verbosity=debug: Verbose logging for easier debugging
+# The PVC mounted at /kaniko/cache ensures cached layers persist between builds.
+# The robust error checking and logging ensures any issues are visible and builds fail fast.
 apiVersion: tekton.dev/v1beta1
 kind: Task
 metadata:
@@ -10,20 +17,48 @@ spec:
       description: "Full image name including tag, e.g., quay.io/paulcapestany/toy-service:v0.1.0-abc1234"
   workspaces:
     - name: source
+  results:
+    - name: build-result
+      description: "Result of the Kaniko build process"
   steps:
+    - name: pre-check
+      image: alpine:3.17
+      script: |
+        #!/usr/bin/env sh
+        set -xe
+        echo "[INFO] Starting pre-check for Kaniko build."
+        echo "[INFO] Checking workspace content:"
+        ls -al /workspace/source || { echo "[ERROR] Failed to list source workspace."; exit 1; }
+        echo "[INFO] Pre-check completed successfully."
     - name: build-and-push
       image: gcr.io/kaniko-project/executor:latest
-      args:
-        - "--dockerfile=/workspace/source/Dockerfile"
-        - "--context=/workspace/source"
-        - "--destination=$(params.IMAGE)"
-        - "--cache=true"
-        - "--verbosity=info"
-      volumeMounts:
-        - name: docker-config
-          mountPath: /kaniko/.docker/config.json
-          subPath: .dockerconfigjson
+      script: |
+        #!/usr/bin/env sh
+        set -xe
+        echo "[INFO] Starting Kaniko build with caching enabled."
+        echo "[INFO] Using image: $(params.IMAGE)"
+        echo "[INFO] Checking cache directory state before build:"
+        ls -al /kaniko/cache || echo "[WARN] No cache directory content yet."
+        
+        # Run Kaniko executor with caching enabled
+        /kaniko/executor \
+          --dockerfile=/workspace/source/Dockerfile \
+          --context=/workspace/source \
+          --destination=$(params.IMAGE) \
+          --cache=true \
+          --cache-dir=/kaniko/cache \
+          --verbosity=debug \
+          --cache-repo=$(echo $(params.IMAGE) | sed 's|\(.*\)/\(.*\)|\1/cache-repo|') || { echo "[ERROR] Kaniko build failed!"; exit 1; }
+        
+        echo "[INFO] Kaniko build and push completed."
+        echo "[INFO] Checking cache directory state after build:"
+        ls -al /kaniko/cache || { echo "[ERROR] Failed to list cache directory after build."; exit 1; }
+        
+        echo "success" > $(results.build-result.path)
+    volumeMounts:
+      - name: kaniko-cache
+        mountPath: /kaniko/cache
   volumes:
-    - name: docker-config
-      secret:
-        secretName: quay-credentials
+    - name: kaniko-cache
+      persistentVolumeClaim:
+        claimName: kaniko-cache-pvc

@@ -1,0 +1,17 @@
+# This PVC provides persistent storage for Kaniko cached layers between builds.
+# By using a PVC, we ensure that repeated builds do not re-download and re-compile unchanged layers.
+# This greatly improves build performance for frequent, incremental builds.
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: kaniko-cache-pvc
+  namespace: default
+  labels:
+    app: kaniko-cache
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: standard

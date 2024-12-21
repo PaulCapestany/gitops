@@ -1,0 +1,19 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: run-toy-web-tests-task
+  namespace: default
+spec:
+  workspaces:
+    - name: source
+  steps:
+    - name: run-web-tests
+      image: node:18-alpine
+      workingDir: /workspace/source
+      script: |
+        #!/usr/bin/env sh
+        set -xe
+        # Install deps
+        npm ci
+        # Run tests
+        npm test

@@ -1,0 +1,68 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: toy-web-build-pipeline
+  namespace: default
+spec:
+  workspaces:
+    - name: source
+  params:
+    - name: git-url
+      type: string
+      description: "Git repository URL for toy-web"
+      default: "https://github.com/paulcapestany/toy-web.git"
+    - name: git-revision
+      type: string
+      description: "Git revision (branch, tag, commit) to build from"
+      default: "main"
+  
+  tasks:
+    - name: fetch-source
+      taskRef:
+        name: git-clone
+        kind: Task
+      params:
+        - name: url
+          value: "$(params.git-url)"
+        - name: revision
+          value: "$(params.git-revision)"
+        - name: deleteExisting
+          value: "true"                
+      workspaces:
+        - name: output
+          workspace: source
+
+    - name: detect-semver
+      runAfter: [fetch-source]
+      taskRef:
+        name: detect-version-tag
+      workspaces:
+        - name: source
+          workspace: source
+
+    - name: transform-sha
+      runAfter: [fetch-source]
+      taskRef:
+        name: transform-sha-task
+      params:
+        - name: fullSha
+          value: "$(tasks.fetch-source.results.commit)"
+
+    - name: run-tests
+      runAfter: [detect-semver, transform-sha]
+      taskRef:
+        name: run-toy-web-tests-task
+      workspaces:
+        - name: source
+          workspace: source
+
+    - name: build-and-push
+      runAfter: [run-tests]
+      taskRef:
+        name: kaniko-build-and-push-task
+      workspaces:
+        - name: source
+          workspace: source
+      params:
+        - name: IMAGE
+          value: "quay.io/paulcapestany/toy-web:$(tasks.detect-semver.results.semverTag)-commit.$(tasks.transform-sha.results.shortSha)"

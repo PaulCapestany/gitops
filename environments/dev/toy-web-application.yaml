@@ -1,0 +1,33 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  namespace: openshift-gitops
+  name: toy-web-dev
+  labels:
+    app.kubernetes.io/part-of: toy-web
+    environment: dev
+  annotations:
+    argocd-image-updater.argoproj.io/image-list: "toyweb=quay.io/paulcapestany/toy-web:>0.1.0-0"
+    argocd-image-updater.argoproj.io/toyweb.update-strategy: "semver"
+    argocd-image-updater.argoproj.io/toyweb.versionConstraint: ">0.1.0-0"
+    argocd-image-updater.argoproj.io/write-back-method: "git"
+    argocd-image-updater.argoproj.io/write-back-target: "helmvalues:values-dev.yaml"
+    argocd-image-updater.argoproj.io/git-branch: main
+    argocd-image-updater.argoproj.io/toyweb.helm.image-name: services.toy-web.repository
+    argocd-image-updater.argoproj.io/toyweb.helm.image-tag: services.toy-web.tag
+spec:
+  project: default
+  source:
+    repoURL: 'https://github.com/paulcapestany/gitops.git'
+    path: 'helm/bitiq'
+    targetRevision: main
+    helm:
+      valueFiles:
+        - values-dev.yaml
+  destination:
+    namespace: default
+    server: 'https://kubernetes.default.svc'
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

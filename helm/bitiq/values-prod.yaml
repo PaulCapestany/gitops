@@ -2,7 +2,6 @@ services:
   toy-service:
     name: toy-service
     repository: quay.io/paulcapestany/toy-service
-    # the tag below is updated by Argo CD Image Updater
     tag: v0.2.12-commit.7a4bc53
     replicaCount: 2
     ingress:
@@ -13,3 +12,17 @@ services:
       minReplicas: 1
       maxReplicas: 5
       cpuTargetUtilization: 80
+
+  toy-web:
+    name: toy-web
+    repository: quay.io/paulcapestany/toy-web
+    tag: v0.1.0-commit.abc1234
+    replicaCount: 2
+    ingress:
+      enabled: true
+      hostname: toy-web-prod.bitiq.io
+    hpa:
+      enabled: true
+      minReplicas: 1
+      maxReplicas: 3
+      cpuTargetUtilization: 70
